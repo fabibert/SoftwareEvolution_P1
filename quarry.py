@@ -25,7 +25,7 @@ def old_get_modified_files(path: str):
         writer.writerows(data)
 
 
-def get_modified_files(path: str):
+def get_modified_files_listed(path: str):
     #header = ['commit', 'changed_files']
     #header = ['filename']
     data = {}
@@ -35,18 +35,6 @@ def get_modified_files(path: str):
             if data.get(file.filename) is None:
                 data[file.filename] = {}
             data[file.filename][commit.hash] = _count_lines(str(file.source_code)) #nested dictionary
-
-    # matrixed_data = []
-    # index_counter=0
-    # for k, v in data.items():
-    #     matrixed_data.append(k)
-    #     matrixed_data.append([])
-    #     for x,y in v.items():
-    #         matrixed_data[index_counter].append(y)
-    #     index_counter += 1
-    # print(matrixed_data)
-
-
 
     matrix = [[y for x, y in v.items()] for k, v in data.items()]
     header_column = []
@@ -65,17 +53,54 @@ def get_modified_files(path: str):
          #writer.writerow(header)
          writer.writerows(matrix)
 
-def create_plot():
-    df = pandas.read_csv("change_log.csv", header=1)
-    #csv file to panda
-    plt.figure(figsize=(10, 10))
-    plt.ylabel('Absolute Power (log)', fontsize=12)
-    plt.xlabel('Frequencies', fontsize=12)
-    plt.plot(df.columns, df.mean())
-    #ignore key values
-    #just get loc and plot
+def get_modified_files(path: str):
+    #header = ['commit', 'changed_files']
+    #header = ['filename']
+    data = {}
+
+    for commit in Repository(path).traverse_commits():
+        for file in commit.modified_files:
+            if data.get(file.filename) is None:
+                data[file.filename] = {}
+            data[file.filename][commit.hash] = _count_lines(str(file.source_code)) #nested dictionary
+
+    listed_data = []
+    for k, v in data.items():
+        listed_data.append([k, v])
+
+    with open('change_log.csv', 'w', encoding='UTF8', newline='') as f:
+         writer = csv.writer(f)
+         #writer.writerow(header)
+         writer.writerows(listed_data)
+
+    def get_modified_files1(path: str):
+        # header = ['commit', 'changed_files']
+        # header = ['filename']
+        data = {}
+
+        for commit in Repository(path).traverse_commits():
+            for file in commit.modified_files:
+                if data.get(file.filename) is None:
+                    data[file.filename] = {}
+                data[file.filename][commit.hash] = _count_lines(str(file.source_code))  # nested dictionary
 
 
+        matrix = [[y for x, y in v.items()] for k, v in data.items()]
+        header_column = []
+        for k, v in data.items():
+            header_column.append(k)
+
+        i = 0
+        for list in matrix:
+            list.insert(0, header_column[i])
+            i = i + 1
+
+        print(matrix)
+
+        with open('change_log.csv', 'w', encoding='UTF8', newline='') as f:
+            writer = csv.writer(f)
+            # writer.writerow(header)
+            writer.writerows(matrix)
 
 def get_change_numbers(path: str):
     mod_files = []
