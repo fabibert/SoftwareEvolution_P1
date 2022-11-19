@@ -36,3 +36,44 @@ def plot():
 
     plt.savefig("graph.pdf")
     plt.show()
+
+
+def plot_from_dictionary():
+    from pydriller import Repository
+    import csv
+    import pandas as pd
+
+    path = "https://github.com/mastodon/mastodon.git"
+    # header = ['commit', 'changed_files']
+    # header = ['filename']
+    data = {}
+
+    for commit in Repository(path).traverse_commits():
+        for file in commit.modified_files:
+            if data.get(file.filename) is None:
+                data[file.filename] = {}
+            data[file.filename][commit.hash] = _count_lines(str(file.source_code))  # nested dictionary
+
+    listed_data = []
+    for k, v in data.items():
+        listed_data.append([k, v])
+
+    df_dict = pd.DataFrame.from_dict(data).T
+    df_dict = df_dict.T.fillna(method='ffill').T
+    df_dict = pd.DataFrame.from_dict(data).T
+    df_dict = df_dict.fillna(value=0)
+
+    import matplotlib.pyplot as plt
+    plt.figure(figsize=(20, 12), dpi=80)
+    for index, column in df_dict.iterrows():
+        plt.plot(column, label=index)
+    plt.legend()
+
+    plt.savefig("graph_dict.pdf")
+    plt.show()
+
+def _count_lines(content: str) -> int:
+    lines = content.split('\\n')
+    while '' in lines:
+        lines.remove('')
+    return len(lines)
