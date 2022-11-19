@@ -54,6 +54,7 @@ def get_modified_files_listed(path: str):
          writer.writerows(matrix)
 
 def get_modified_files(path: str):
+    import pandas as pd
     #header = ['commit', 'changed_files']
     #header = ['filename']
     data = {}
@@ -67,6 +68,8 @@ def get_modified_files(path: str):
     listed_data = []
     for k, v in data.items():
         listed_data.append([k, v])
+
+    pd.DataFrame.from_dict(data)
 
     with open('change_log.csv', 'w', encoding='UTF8', newline='') as f:
          writer = csv.writer(f)
