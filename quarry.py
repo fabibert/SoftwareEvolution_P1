@@ -14,7 +14,7 @@ def get_modified_files_listed(path: str):
         for file in commit.modified_files:
             if data.get(file.filename) is None:
                 data[file.filename] = {}
-            data[file.filename][commit.hash] = _count_lines(str(file.source_code)) #nested dictionary
+            data[file.filename][commit.hash] = _count_lines(str(file.content)) #nested dictionary
 
     matrix = [[y for x, y in v.items()] for k, v in data.items()]
     header_column = []
@@ -43,7 +43,7 @@ def get_modified_files(path: str):
         for file in commit.modified_files:
             if data.get(file.filename) is None:
                 data[file.filename] = {}
-            data[file.filename][commit.hash] = _count_lines(str(file.source_code)) #nested dictionary
+            data[file.filename][commit.hash] = _count_lines(str(file.content)) #nested dictionary
 
     listed_data = []
     for k, v in data.items():
@@ -66,7 +66,7 @@ def get_modified_files1(path: str):
         for file in commit.modified_files:
             if data.get(file.filename) is None:
                 data[file.filename] = {}
-            data[file.filename][commit.hash] = _count_lines(str(file.source_code))  # nested dictionary
+            data[file.filename][commit.hash] = _count_lines(str(file.content))  # nested dictionary
 
 
     matrix = [[y for x, y in v.items()] for k, v in data.items()]
