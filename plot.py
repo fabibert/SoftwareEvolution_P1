@@ -88,6 +88,7 @@ def plot_from_dictionary():
     plt.savefig("graph_dict.pdf")
     plt.show()
 
+
 def plot_csv():
     df_dict = pd.read_csv("dict_frame_filtered.csv", index_col=0)
     df_dict = df_dict.head(10)
