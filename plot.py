@@ -1,6 +1,10 @@
+from pydriller import Repository
+import pandas as pd
+import matplotlib.pyplot as plt
+from quarry import _count_lines
+
+
 def plot():
-    import pandas
-    import matplotlib.pyplot as plt
     # Input
     data_file = 'change_log.csv'
 
@@ -26,23 +30,20 @@ def plot():
     column_names = [i for i in range(0, largest_column_count)]
     column_names[0] = "filenames"
 
-    # Read csv
-    df = pandas.read_csv(data_file, header=None, delimiter=data_file_delimiter, names=column_names, index_col=0)
+    #create dataframe from csv
+    df = pd.read_csv(data_file, header=None, delimiter=data_file_delimiter, names=column_names, index_col=0)
 
+    #create plot
     plt.figure(figsize=(20, 12), dpi=80)
     for index, column in df.iterrows():
         plt.plot(column, label=index)
-    plt.legend()
 
+    plt.legend()
     plt.savefig("graph.pdf")
     plt.show()
 
 
 def plot_from_dictionary():
-    from pydriller import Repository
-    import csv
-    import pandas as pd
-
     path = "https://github.com/mastodon/mastodon.git"
     # header = ['commit', 'changed_files']
     # header = ['filename']
@@ -58,22 +59,17 @@ def plot_from_dictionary():
     for k, v in data.items():
         listed_data.append([k, v])
 
+    #preparing dataframe from dictionary
     df_dict = pd.DataFrame.from_dict(data).T
     df_dict = df_dict.T.fillna(method='ffill').T
     df_dict = pd.DataFrame.from_dict(data).T
     df_dict = df_dict.fillna(value=0)
 
-    import matplotlib.pyplot as plt
+    #create plot from dataframe
     plt.figure(figsize=(20, 12), dpi=80)
     for index, column in df_dict.iterrows():
         plt.plot(column, label=index)
-    plt.legend()
 
+    plt.legend()
     plt.savefig("graph_dict.pdf")
     plt.show()
-
-def _count_lines(content: str) -> int:
-    lines = content.split('\\n')
-    while '' in lines:
-        lines.remove('')
-    return len(lines)
