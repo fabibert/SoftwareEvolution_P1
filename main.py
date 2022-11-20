@@ -2,7 +2,6 @@ from quarry import get_modified_files_listed
 from quarry import get_modified_files
 from plot import plot_from_dictionary
 from quarry import get_change_numbers
-from plot import plot
 from plot import plot_csv
 
 
