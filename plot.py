@@ -7,15 +7,13 @@ from quarry import _count_lines
 def plot():
     # Input
     data_file = 'change_log.csv'
-
     # Delimiter
     data_file_delimiter = ','
-
     # The max column count a line in the file could have
     largest_column_count = 0
 
-    # Loop the data lines
-    with open(data_file, 'r') as temp_f:
+    #counting the longest row in the csv to initialize dataframe
+    with open(data_file, 'r') as temp_f: # Loop the data lines
         # Read the lines
         lines = temp_f.readlines()
 
@@ -49,6 +47,7 @@ def plot_from_dictionary():
     # header = ['filename']
     data = {}
 
+    #reusing antons commit to dictionary code
     for commit in Repository(path).traverse_commits():
         for file in commit.modified_files:
             if data.get(file.filename) is None:
