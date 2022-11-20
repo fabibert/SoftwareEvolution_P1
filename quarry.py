@@ -5,27 +5,6 @@ import pandas as pd
 import matplotlib as plt
 
 
-###deprecated
-def old_get_modified_files(path: str):
-    header = ['commit', 'changed_files']
-    data = []
-
-    for commit in Repository(path).traverse_commits():
-        entry = [commit.hash]
-
-        changed_files = {}
-        for file in commit.modified_files:
-            changed_files[file.filename] = _count_lines(str(file.content))
-
-        entry.append(changed_files)
-        data.append(entry)
-
-    with open('change_log.csv', 'w', encoding='UTF8', newline='') as f:
-        writer = csv.writer(f)
-        writer.writerow(header)
-        writer.writerows(data)
-
-
 def get_modified_files_listed(path: str):
     #header = ['commit', 'changed_files']
     #header = ['filename']
