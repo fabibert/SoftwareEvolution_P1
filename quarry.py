@@ -1,8 +1,5 @@
-from pydriller import *
 from pydriller import Repository
 import csv
-import pandas as pd
-import matplotlib as plt
 
 
 def get_modified_files_listed(path: str):
@@ -13,7 +10,7 @@ def get_modified_files_listed(path: str):
         for file in commit.modified_files:
             if data.get(file.filename) is None:
                 data[file.filename] = {}
-            data[file.filename][commit.hash] = _count_lines(str(file.content)) #nested dictionary
+            data[file.filename][commit.hash] = _count_lines(str(file.content))
 
     matrix = [[y for x, y in v.items()] for k, v in data.items()]
     header_column = []
@@ -41,13 +38,11 @@ def get_modified_files(path: str):
         for file in commit.modified_files:
             if data.get(file.filename) is None:
                 data[file.filename] = {}
-            data[file.filename][commit.hash] = _count_lines(str(file.content)) #nested dictionary
+            data[file.filename][commit.hash] = _count_lines(str(file.content))
 
     listed_data = []
     for k, v in data.items():
         listed_data.append([k, v])
-
-    pd.DataFrame.from_dict(data)
 
     with open('change_log.csv', 'w', encoding='UTF8', newline='') as f:
          writer = csv.writer(f)
