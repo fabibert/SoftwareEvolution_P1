@@ -48,21 +48,36 @@ def plot_from_dictionary():
     data = {}
 
     #reusing antons commit to dictionary code
+    commits = Repository(path).traverse_commits()
+    number_commits = sum(1 for _ in commits)
+    counter = 0
     for commit in Repository(path).traverse_commits():
+        counter = counter + 1
+        if(counter%100 == 0):
+            print(counter, "/", number_commits) #display progress
         for file in commit.modified_files:
             if data.get(file.filename) is None:
                 data[file.filename] = {}
             data[file.filename][commit.hash] = _count_lines(str(file.source_code))  # nested dictionary
-
-    listed_data = []
-    for k, v in data.items():
-        listed_data.append([k, v])
 
     #preparing dataframe from dictionary
     df_dict = pd.DataFrame.from_dict(data).T
     df_dict = df_dict.T.fillna(method='ffill').T
     df_dict = pd.DataFrame.from_dict(data).T
     df_dict = df_dict.fillna(value=0)
+    print("saving dictionary")
+    df_dict.to_csv("dict_frame.csv")
+
+    #change the dictionary to only keep rows of files which are ins services
+    mypath = "../mastodon/app/services"
+    from os import listdir
+    from os.path import isfile, join
+    serviceFiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+    print(serviceFiles)
+
+    df_dict = df_dict.loc[serviceFiles]
+    print("saving filtered")
+    df_dict.to_csv("dict_frame_filtered.csv")
 
     #create plot from dataframe
     plt.figure(figsize=(20, 12), dpi=80)
