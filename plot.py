@@ -2,6 +2,8 @@ from pydriller import Repository
 import pandas as pd
 import matplotlib.pyplot as plt
 from quarry import _count_lines
+from os import listdir
+from os.path import isfile, join
 
 
 def plot():
@@ -69,9 +71,7 @@ def plot_from_dictionary():
     df_dict.to_csv("dict_frame.csv")
 
     #change the dictionary to only keep rows of files which are ins services
-    mypath = "../mastodon/app/services"
-    from os import listdir
-    from os.path import isfile, join
+    mypath = "../mastodon/app/services" #download the repo to a folder next to this one to access list of files in subfolder
     serviceFiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
     print(serviceFiles)
 
@@ -80,6 +80,20 @@ def plot_from_dictionary():
     df_dict.to_csv("dict_frame_filtered.csv")
 
     #create plot from dataframe
+    plt.figure(figsize=(20, 12), dpi=80)
+    for index, column in df_dict.iterrows():
+        plt.plot(column, label=index)
+
+    plt.legend()
+    plt.savefig("graph_dict.pdf")
+    plt.show()
+
+def plot_csv():
+    df_dict = pd.read_csv("dict_frame_filtered.csv", index_col=0)
+    df_dict = df_dict.head(10)
+    df_dict = df_dict.loc[:, (df_dict != 0).any(axis=0)] #drop commits where loc is all zero
+
+    # create plot from dataframe
     plt.figure(figsize=(20, 12), dpi=80)
     for index, column in df_dict.iterrows():
         plt.plot(column, label=index)
