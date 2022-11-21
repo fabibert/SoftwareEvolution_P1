@@ -16,8 +16,8 @@ def plot_from_dictionary(path):
         if(counter%100 == 0):
             print(counter, "/", "12366") #display progress
         for file in commit.modified_files:
-            file_path = file.old_path
-            if file_path is None: file_path = file.new_path
+            file_path = file.new_path
+            if file_path is None: file_path = file.old_path
             if file_path.startswith("app\\services"):
                 if data.get(file.filename) is None:
                     data[file.filename] = {}
