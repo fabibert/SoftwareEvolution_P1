@@ -108,6 +108,28 @@ def get_current_sizes():
     except:
         print("change_log.csv not found")
 
+
+def filter_commits_by_bugfixes(path):
+    bugfixes = []
+
+    i = 0
+    for commit in Repository(path).traverse_commits():
+        if i >= 1000: break
+        if 'bug' in commit.msg.lower():
+            fixed_files = []
+            for file in commit.modified_files:
+                file_path = file.new_path
+                if file_path is None: file_path = file.old_path
+                if file_path.startswith("app\\services"):
+                    fixed_files.append(file.filename)
+            if fixed_files:
+                bugfixes.append([commit.hash, fixed_files])
+        i += 1
+
+    for entry in bugfixes:
+        print(f"{entry[0]}; changed files:\n{entry[1]}\n")
+
+
 def _count_lines(content: str) -> int:
     lines = content.split('\\n')
     while '' in lines:
